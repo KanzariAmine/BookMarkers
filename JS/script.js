@@ -4,6 +4,11 @@ $('#myForm').submit((e) => {
     let siteName = $('#sitename').val();
     let siteUrl = $('#siteURL').val();
 
+    if(!validateFrom(siteName, siteUrl)){
+        return false;
+    }
+   
+
     let bookMark = {
         name: siteName,
         url: siteUrl
@@ -23,29 +28,14 @@ $('#myForm').submit((e) => {
         //Re set book to LocalStorage
         localStorage.setItem('bookmarks', JSON.stringify(bookMarks))
     }
+    //Clear Form 
+    document.getElementById('myForm').reset();
+
     //Re-Ftech BookMarks and add in the page
     fectchBookmarks();
 
     e.preventDefault()
     });
-
-
-//Delete Element
-function deleteBookMarks(name){
-    //Get bookmarks from LocalStorage
-    let bookMarks = JSON.parse(localStorage.getItem('bookmarks'));
-    for(let elm in bookMarks){
-        let nameOfSite = bookMarks[elm].name;
-        if(nameOfSite === name){
-            //localStorage.removeItem('bookmarks', nameOfSite); delete from the Localstorage
-            //delete bookMarks.nameOfSite; delete attribute from Object
-            bookMarks.splice(elm, 1)
-            console.log(bookMarks)
-        }
-    }
-    localStorage.setItem('bookmarks', JSON.stringify(bookMarks));
-    fectchBookmarks();
-}
 
 //Fetch BookMarks
 function fectchBookmarks(){
@@ -65,4 +55,40 @@ function fectchBookmarks(){
             </h3>
         </div>`);
     }
+}
+
+
+
+//Delete Element
+function deleteBookMarks(name){
+    //Get bookmarks from LocalStorage
+    let bookMarks = JSON.parse(localStorage.getItem('bookmarks'));
+    for(let elm in bookMarks){
+        let nameOfSite = bookMarks[elm].name;
+        if(nameOfSite === name){
+            //localStorage.removeItem('bookmarks', nameOfSite); delete from the Localstorage
+            //delete bookMarks.nameOfSite; delete attribute from Object
+            //Remove element from array
+            bookMarks.splice(elm, 1);
+        }
+    }
+    localStorage.setItem('bookmarks', JSON.stringify(bookMarks));
+    fectchBookmarks();
+}
+
+//Validate Function
+function validateFrom(siteName, siteUrl){
+    if(!siteName || !siteUrl){
+        alert('Please fill in the form');
+        return false;
+    }
+    let expression =/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
+    
+
+    let regex = new RegExp(expression);
+    if (!siteUrl.match(regex)) {
+        alert('Please use a valid URL');
+        return false;
+    }
+    return true;
 }
