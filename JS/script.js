@@ -1,5 +1,5 @@
 //Create Event listenr for submit button
-$('.btn').click(() => {
+$('#myForm').submit((e) => {
     //Get the value from the input
     let siteName = $('#sitename').val();
     let siteUrl = $('#siteURL').val();
@@ -23,5 +23,46 @@ $('.btn').click(() => {
         //Re set book to LocalStorage
         localStorage.setItem('bookmarks', JSON.stringify(bookMarks))
     }
-   
-});
+    //Re-Ftech BookMarks and add in the page
+    fectchBookmarks();
+
+    e.preventDefault()
+    });
+
+
+//Delete Element
+function deleteBookMarks(name){
+    //Get bookmarks from LocalStorage
+    let bookMarks = JSON.parse(localStorage.getItem('bookmarks'));
+    for(let elm in bookMarks){
+        let nameOfSite = bookMarks[elm].name;
+        if(nameOfSite === name){
+            //localStorage.removeItem('bookmarks', nameOfSite); delete from the Localstorage
+            //delete bookMarks.nameOfSite; delete attribute from Object
+            bookMarks.splice(elm, 1)
+            console.log(bookMarks)
+        }
+    }
+    localStorage.setItem('bookmarks', JSON.stringify(bookMarks));
+    fectchBookmarks();
+}
+
+//Fetch BookMarks
+function fectchBookmarks(){
+    //Get bookmarks from LocalStorage
+    let bookMarks = JSON.parse(localStorage.getItem('bookmarks'));
+    //Selecte div for output
+    let bookmarksResults = $('#bookmarksResults');
+    bookmarksResults.empty();
+    //Build the Output
+    for(let elm in bookMarks){
+        let name = bookMarks[elm].name;
+        let url = bookMarks[elm].url;
+        bookmarksResults.append(`<div  class="well">
+            <h3>${name}
+                <a class='btn btn-primary' target='_blank' href="${url}">Visit</a>
+                <a onClick='deleteBookMarks("${name}")' class='btn btn-danger' href="#">Delete</a>
+            </h3>
+        </div>`);
+    }
+}
